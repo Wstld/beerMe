@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".view.MainActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:id="@+id/fab_list"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="10dp"
-        android:id="@+id/fab_list"
         android:contentDescription="TODO" />
 
     <com.google.android.gms.maps.MapView
