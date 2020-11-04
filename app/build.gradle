@@ -23,6 +23,9 @@ android {
         resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
 
     }
+    buildFeatures {
+        viewBinding true
+    }
 
     buildTypes {
         release {
