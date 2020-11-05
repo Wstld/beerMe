@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(),OnMapReadyCallback{
         //init map
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
-        binding.mapView.getMapAsync { this }
+        binding.mapView.getMapAsync ( this )
 
         //test onckick via viewmodel
         binding.fabList.setOnClickListener { view ->
