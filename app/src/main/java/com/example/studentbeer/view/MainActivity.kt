@@ -2,7 +2,9 @@ package com.example.studentbeer.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.databinding.ActivityMainBinding
 import com.example.studentbeer.util.MainActivityViewModelFactory
 import com.example.studentbeer.viewmodel.MainActivityViewModel
@@ -25,7 +27,8 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         //init viewmodel
-        val factory = MainActivityViewModelFactory()
+        val repository = DataRepository()
+        val factory = MainActivityViewModelFactory(repository)
         viewModel = ViewModelProvider(this,factory).get(
             MainActivityViewModel::class.java
         )
@@ -37,6 +40,7 @@ class MainActivity : AppCompatActivity(),
         //test onckick via viewmodel
         binding.fabList.setOnClickListener { view ->
             viewModel.test(view.context)
+            viewModel.getSomeData(view.context)
         }
     }
 
