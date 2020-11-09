@@ -1,8 +1,7 @@
 package com.example.studentbeer.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.databinding.ActivityMainBinding
@@ -18,8 +17,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : AppCompatActivity(),
-        GoogleMap.OnMarkerClickListener,
-        OnMapReadyCallback{
+    GoogleMap.OnMarkerClickListener,
+    OnMapReadyCallback {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,26 +27,31 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         //init viewmodel
+<<<<<<< HEAD
         val factory = UtilInject.viewModelFactoryInjection()
         viewModel = ViewModelProvider(this,factory).get(
+=======
+        val repository = DataRepository()
+        val factory = MainActivityViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(
+>>>>>>> database
             MainActivityViewModel::class.java
         )
         //init map
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
-        binding.mapView.getMapAsync ( this )
+        binding.mapView.getMapAsync(this)
 
         //test onckick via viewmodel
         binding.fabList.setOnClickListener { view ->
             viewModel.test(view.context)
-            viewModel.getSomeData(view.context)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY) ?: Bundle().apply {
-            putBundle(MAPVIEW_BUNDLE_KEY,this)
+            putBundle(MAPVIEW_BUNDLE_KEY, this)
         }
         binding.mapView.onSaveInstanceState(mapViewBundle)
     }
@@ -81,6 +85,7 @@ class MainActivity : AppCompatActivity(),
         }
 
     }
+
     override fun onMarkerClick(marker: Marker?): Boolean {
         marker?.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         return false
@@ -102,7 +107,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     companion object {
-    private const val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
-}
+        private const val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
+    }
 }
 
