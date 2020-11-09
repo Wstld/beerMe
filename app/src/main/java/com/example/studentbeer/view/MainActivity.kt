@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.databinding.ActivityMainBinding
 import com.example.studentbeer.util.MainActivityViewModelFactory
+import com.example.studentbeer.util.UtilInject
 import com.example.studentbeer.viewmodel.MainActivityViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -27,8 +28,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         //init viewmodel
-        val repository = DataRepository()
-        val factory = MainActivityViewModelFactory(repository)
+        val factory = UtilInject.viewModelFactoryInjection()
         viewModel = ViewModelProvider(this,factory).get(
             MainActivityViewModel::class.java
         )
