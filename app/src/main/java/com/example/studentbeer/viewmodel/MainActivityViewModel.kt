@@ -3,10 +3,12 @@ package com.example.studentbeer.viewmodel
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.example.studentbeer.data.DataRepository
 
-class MainActivityViewModel():ViewModel() {
-    fun test(context: Context){
+class MainActivityViewModel(private val dataRepository: DataRepository) : ViewModel() {
+    fun test(context: Context) {
         Toast.makeText(context, "Klick klick", Toast.LENGTH_SHORT).show()
     }
+
 
 }

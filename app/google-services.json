@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "160844164166",
+    "firebase_url": "https://studentbeer-82ac6.firebaseio.com",
+    "project_id": "studentbeer-82ac6",
+    "storage_bucket": "studentbeer-82ac6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160844164166:android:dce6ac61e55cc61146ae47",
+        "android_client_info": {
+          "package_name": "com.example.studentbeer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160844164166-1rdmoss6tljf78on7vtbtev0ckk1vdj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIHMeNZNCMxmIgOH0DnlHA0GnWrlgf23Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160844164166-1rdmoss6tljf78on7vtbtev0ckk1vdj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
