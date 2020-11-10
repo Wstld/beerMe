@@ -27,16 +27,12 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         //init viewmodel
-<<<<<<< HEAD
+
         val factory = UtilInject.viewModelFactoryInjection()
         viewModel = ViewModelProvider(this,factory).get(
-=======
-        val repository = DataRepository()
-        val factory = MainActivityViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory).get(
->>>>>>> database
             MainActivityViewModel::class.java
         )
+        
         //init map
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
