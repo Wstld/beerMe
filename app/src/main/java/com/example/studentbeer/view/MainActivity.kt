@@ -1,6 +1,7 @@
 package com.example.studentbeer.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.studentbeer.data.DataRepository
@@ -15,6 +16,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity(),
     GoogleMap.OnMarkerClickListener,
@@ -68,17 +74,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onMapReady(map: GoogleMap?) {
-        val stockholmLatLng = LatLng(59.313152, 18.075067)
-        val stockholmMarker = MarkerOptions().position(stockholmLatLng).title("Stockholm")
-        map?.apply {
-            addMarker(stockholmMarker)
-            moveCamera(CameraUpdateFactory.newLatLng(stockholmLatLng))
-            setOnMarkerClickListener {
-                moveCamera(CameraUpdateFactory.newLatLngZoom(stockholmLatLng, 10f))
-                animateCamera(CameraUpdateFactory.zoomIn())
-                onMarkerClick(it)
-            }
-        }
+
 
     }
 

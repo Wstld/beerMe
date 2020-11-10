@@ -27,7 +27,7 @@ class DataRepository {
     }
 
     // Add all the data in TempSingleTon to FireStore, DO NOT CALL THIS FUNCTION.
-    fun addTempData() {
+/*    fun addTempData() {
         try {
             for (bar in TempSingleTon.bars) {
                 db.collection("bars").add(convertBarModelToHashMap(bar)).addOnSuccessListener {
@@ -53,7 +53,7 @@ class DataRepository {
         } catch (event: Exception) {
             Log.d(errorTag, "Something went wrong! func {addIdToTempData} $event")
         }
-    }
+    }*/
 
     // Read a bar
     fun getDocumentById(id: String): BarModel? {
