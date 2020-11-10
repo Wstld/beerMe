@@ -1,9 +1,13 @@
 package com.example.studentbeer.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+
 import com.example.studentbeer.data.DataRepository
+import com.example.studentbeer.data.models.BarModel
 import com.example.studentbeer.databinding.ActivityMainBinding
 import com.example.studentbeer.util.MainActivityViewModelFactory
 import com.example.studentbeer.util.UtilInject
@@ -11,42 +15,63 @@ import com.example.studentbeer.viewmodel.MainActivityViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import com.google.maps.android.ui.BubbleIconFactory
+import com.google.maps.android.ui.IconGenerator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity(),
-    GoogleMap.OnMarkerClickListener,
-    OnMapReadyCallback {
+    GoogleMap.OnMarkerClickListener{
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
+    private lateinit var googleMap: GoogleMap
+    private var mapReady = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         //init viewmodel
-<<<<<<< HEAD
         val factory = UtilInject.viewModelFactoryInjection()
         viewModel = ViewModelProvider(this,factory).get(
-=======
-        val repository = DataRepository()
-        val factory = MainActivityViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory).get(
->>>>>>> database
             MainActivityViewModel::class.java
         )
+
         //init map
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
-        binding.mapView.getMapAsync(this)
-
-        //test onckick via viewmodel
-        binding.fabList.setOnClickListener { view ->
-            viewModel.test(view.context)
+        binding.mapView.getMapAsync{map ->
+            googleMap = map
+            mapReady = true
+            val list = viewModel.getAllBars().value
+            if (list!=null && list.isNotEmpty())
+            updateMap(map = map,list)
         }
+        //Check for changes in database and updatesmarkers
+
+        viewModel.getAllBars().observe(this,{
+            if (it != null&&mapReady){
+            updateMap(googleMap,it)}
+        })
+
+
+
+
+
+        //test live update with adding bar.
+        binding.fabList.setOnClickListener { view ->
+            if(mapReady) viewModel.test(googleMap)
+        }
+
+
+
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -71,21 +96,6 @@ class MainActivity : AppCompatActivity(),
         super.onStop()
     }
 
-    override fun onMapReady(map: GoogleMap?) {
-        val stockholmLatLng = LatLng(59.313152, 18.075067)
-        val stockholmMarker = MarkerOptions().position(stockholmLatLng).title("Stockholm")
-        map?.apply {
-            addMarker(stockholmMarker)
-            moveCamera(CameraUpdateFactory.newLatLng(stockholmLatLng))
-            setOnMarkerClickListener {
-                moveCamera(CameraUpdateFactory.newLatLngZoom(stockholmLatLng, 10f))
-                animateCamera(CameraUpdateFactory.zoomIn())
-                onMarkerClick(it)
-            }
-        }
-
-    }
-
     override fun onMarkerClick(marker: Marker?): Boolean {
         marker?.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         return false
@@ -104,6 +114,21 @@ class MainActivity : AppCompatActivity(),
     override fun onLowMemory() {
         binding.mapView.onLowMemory()
         super.onLowMemory()
+    }
+    fun updateMap(map: GoogleMap,list:List<BarModel>){
+        map.clear()
+        list.forEach {
+                bar ->
+            map.addMarker(
+                MarkerOptions()
+                    .position(LatLng(bar.latitude,bar.longitude))
+                    .title(bar.barName)
+                    .icon(BitmapDescriptorFactory.fromBitmap(
+                        IconGenerator(this).makeIcon("${bar.beerPrice}kr")
+                    ))
+
+            )
+        }
     }
 
     companion object {
