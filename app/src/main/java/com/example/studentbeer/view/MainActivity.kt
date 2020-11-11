@@ -51,6 +51,15 @@ class MainActivity : AppCompatActivity(),
             val list = viewModel.getAllBars().value
             if (list!=null && list.isNotEmpty())
             updateMap(map = map,list)
+            if (mapReady) {
+                val stockholmLatLng = LatLng(59.311054, 18.030045)
+                val stockholmMarker = MarkerOptions().position(stockholmLatLng).title("IT - Högskolan")
+                map!!.setMinZoomPreference(15.5f)
+                map?.apply {
+                    addMarker(stockholmMarker)
+                    moveCamera(CameraUpdateFactory.newLatLng(stockholmLatLng))
+                }
+            }
         }
         //Check for changes in database and updatesmarkers
 

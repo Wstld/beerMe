@@ -2,8 +2,6 @@
   <library name="Gradle: com.google.firebase:firebase-firestore:22.0.0@aar">
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2ae2e1c600445ff33134062b635fb3d9/jetified-firebase-firestore-22.0.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4ea502039baf146c066f0480c9602e10/jetified-firebase-firestore-22.0.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4ea502039baf146c066f0480c9602e10/jetified-firebase-firestore-22.0.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4ea502039baf146c066f0480c9602e10/jetified-firebase-firestore-22.0.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/650f61ffe3f4e57672ea92bbf352d8c0/jetified-firebase-firestore-22.0.0/res" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/650f61ffe3f4e57672ea92bbf352d8c0/jetified-firebase-firestore-22.0.0/jars/classes.jar!/" />
