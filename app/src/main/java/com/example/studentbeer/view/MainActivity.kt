@@ -62,16 +62,18 @@ class MainActivity : AppCompatActivity(),
             if (it != null&&mapReady){
                 updateMap(googleMap,it)}
         })
+        if(locationPremission){
         viewModel.currentPos.observe(this,{
             when(location){
                 null -> {
                     updateMapPosition(it)
-                    googleMap.isMyLocationEnabled = true
+                    if(mapReady){
+                    googleMap.isMyLocationEnabled = true}
                 }
                 else -> location = it
             }
 
-        })
+        })}
 
         //init map
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
@@ -82,6 +84,7 @@ class MainActivity : AppCompatActivity(),
             val list = viewModel.getAllBars().value
             if (list!=null && list.isNotEmpty())
             updateMap(map = map,list)
+            if (!locationPremission) updateMapPosition(LocationModel(59.31159,18.030053))
 
 
   /*          if (mapReady) {
@@ -167,9 +170,14 @@ class MainActivity : AppCompatActivity(),
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             LOCATION_REQUEST -> {
-                askForlocationPremission()
+                if (!grantResults.contains(-1)) {
+                    askForlocationPremission()
+                } else {
+                    Toast.makeText(this, "Didnot accept", Toast.LENGTH_SHORT).show()
+                }
+
             }
-            else -> {Toast.makeText(this, "DID NOT ACCEPT", Toast.LENGTH_SHORT).show()}
+            else -> {}
         }
     }
 
@@ -220,12 +228,12 @@ class MainActivity : AppCompatActivity(),
         }
     }
     fun updateMapPosition(pos:LocationModel){
-        if (mapReady&&locationPremission){
+        if (mapReady){
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(pos.lat,pos.long),16.0f
                 ))
-            location = pos
+            if (locationPremission) location = pos
             //viewModel.currentPos.stopLocationUpdates()
         }
     }
