@@ -27,10 +27,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.BubbleIconFactory
 import com.google.maps.android.ui.IconGenerator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlin.concurrent.thread
 import kotlin.math.log
 const val LOCATION_REQUEST = 1
 class MainActivity : AppCompatActivity(),
@@ -38,16 +36,16 @@ class MainActivity : AppCompatActivity(),
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var googleMap: GoogleMap
-    private var location: LocationModel? = null
-    private var locationPremission:Boolean = false
+    private var location: LocationModel = LocationModel(59.31159,18.030053)
     private var mapReady = false
+    private var userLocationZoomSet = false
 
 
-    @SuppressLint("MissingPermission")
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        askForlocationPremission()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -58,57 +56,10 @@ class MainActivity : AppCompatActivity(),
             MainActivityViewModel::class.java
         )
 
-        viewModel.getAllBars().observe(this,{
-            if (it != null&&mapReady){
-                updateMap(googleMap,it)}
-        })
-        if(locationPremission){
-        viewModel.currentPos.observe(this,{
-            when(location){
-                null -> {
-                    updateMapPosition(it)
-                    if(mapReady){
-                    googleMap.isMyLocationEnabled = true}
-                }
-                else -> location = it
-            }
 
-        })}
-
-        //init map
+        //mapbundel
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
-        binding.mapView.getMapAsync{map ->
-            googleMap = map
-            mapReady = true
-            val list = viewModel.getAllBars().value
-            if (list!=null && list.isNotEmpty())
-            updateMap(map = map,list)
-            if (!locationPremission) updateMapPosition(LocationModel(59.31159,18.030053))
-
-
-  /*          if (mapReady) {
-                val stockholmLatLng = LatLng(59.311054, 18.030045)
-                val stockholmMarker = MarkerOptions().position(stockholmLatLng).title("IT - Högskolan")
-                map!!.setMinZoomPreference(15.5f)
-                map?.apply {
-                    addMarker(stockholmMarker)
-                    moveCamera(CameraUpdateFactory.newLatLng(stockholmLatLng))
-                }
-            }*/
-        }
-        //Check for changes in database and updatesmarkers
-
-
-
-
-
-
-
-
-        //test live update with adding bar.
-
-
 
 
     }
@@ -123,22 +74,24 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onResume() {
-        binding.mapView.onResume()
         super.onResume()
-
+        binding.mapView.onResume()
     }
 
     override fun onStart() {
-        binding.mapView.onStart()
         super.onStart()
-
+        binding.mapView.onStart()
+        //restores not set on position value on restart.
+        userLocationZoomSet = false
+        initMap()
     }
 
 
 
     override fun onStop() {
-        binding.mapView.onStop()
         super.onStop()
+        binding.mapView.onStop()
+
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
@@ -147,59 +100,59 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onPause() {
-        binding.mapView.onPause()
         super.onPause()
+        binding.mapView.onPause()
+
     }
 
     override fun onDestroy() {
-        binding.mapView.onDestroy()
         super.onDestroy()
+        binding.mapView.onDestroy()
+
     }
 
     override fun onLowMemory() {
-        binding.mapView.onLowMemory()
         super.onLowMemory()
+        binding.mapView.onLowMemory()
+
     }
 
-    //sets
+    // happens after we have asked for permission.
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //catches our request code callback.
         when(requestCode){
             LOCATION_REQUEST -> {
+                //if user accepts request the observer will fire. Otherwise the initMap function continues.
                 if (!grantResults.contains(-1)) {
-                    askForlocationPremission()
-                } else {
-                    Toast.makeText(this, "Didnot accept", Toast.LENGTH_SHORT).show()
+                    setLocationListner()
                 }
-
             }
-            else -> {}
         }
     }
 
     //ask for premission if not granted
 
     private fun askForlocationPremission() {
-        when{
-            isPermissionsGranted() -> {
-                if(!locationPremission)
-                {
-                locationPremission = true
-                }
+       when {
+           //if we have location permission this will start observer.
+           isPermissionsGranted() -> {
+               setLocationListner()
+           }
+           //if not we'll ask for it.
+            else  -> {
+                     ActivityCompat.requestPermissions(
+                    this,arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),
+                     LOCATION_REQUEST)
             }
-            else -> ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),
-                LOCATION_REQUEST
-            )
         }
     }
 
-    //returns true or false
+    //checks if location permission is given and returns true or false.
     private fun isPermissionsGranted() =
         ActivityCompat.checkSelfPermission(
             this,
@@ -228,14 +181,46 @@ class MainActivity : AppCompatActivity(),
         }
     }
     fun updateMapPosition(pos:LocationModel){
-        if (mapReady){
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(pos.lat,pos.long),16.0f
                 ))
-            if (locationPremission) location = pos
-            //viewModel.currentPos.stopLocationUpdates()
+    }
+
+    fun initMap(){
+        binding.mapView.getMapAsync{map ->
+            googleMap = map
+            mapReady = true
+            viewModel.getAllBars().observe(this,{
+                if(it.isNotEmpty()){
+                    updateMap(map=map,it)
+                }
+            })
+            //sets default map camera position
+            updateMapPosition(location)
+
+            //ask for location grant, if user agrees to this setlocation() observes user location and updates position of camera to this once.
+            askForlocationPremission()
+
+
         }
+    }
+    @SuppressLint("MissingPermission")
+    private fun setLocationListner(){
+        viewModel.currentPos.observe(this,
+            {
+                //observese changes in location and sets location varible to current.
+                location = it
+                //if map is not zoomed to user location on startup this will fire
+                if (!userLocationZoomSet&&isPermissionsGranted()){
+                    updateMapPosition(location)
+                    googleMap.isMyLocationEnabled = true
+                    //sets notifies observer that location on startup has already been set.
+                    userLocationZoomSet = true
+                    //stops location updates.
+                    viewModel.currentPos.stopLocationUpdates()
+                }
+            })
     }
 
 
