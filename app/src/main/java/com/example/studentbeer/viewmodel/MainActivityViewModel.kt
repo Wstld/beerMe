@@ -27,6 +27,12 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         map.clear()
     }
 
+    fun getUserReview(context: Context){
+
+
+
+    }
+
 
 
 

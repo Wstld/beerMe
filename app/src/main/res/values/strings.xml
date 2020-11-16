@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StudentBeer</string>
+    <string name="rating_question">Hur var ditt besök på</string>
+    <string name="price_question">Vad kostade en storstark på</string>
 </resources>
