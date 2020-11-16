@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity(),
                         IconGenerator(this).makeIcon("${bar.beerPrice}kr")
                     ))
 
-            )
+            ).tag = bar
         }
     }
     fun updateMapPosition(pos:LocationModel){
