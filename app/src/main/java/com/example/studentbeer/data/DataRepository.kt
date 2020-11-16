@@ -1,26 +1,35 @@
 package com.example.studentbeer.data
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.observe
 import com.example.studentbeer.data.models.BarModel
+import com.example.studentbeer.data.models.LocationModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
-class DataRepository {
+class DataRepository(application: Application) {
     // Tags For Log
     private val successTag: String = "!!!"
     private val errorTag: String = "@@@"
 
+
+
+
     // FireStore
     private val db = Firebase.firestore
     val liveBarList = MutableLiveData<List<BarModel>>()
+    //Position
 
+    val liveLocationData = LiveLocationData(application)
     //Repo is created fetch from Firestore and added listner. Get the liveBarList and observe from viewmodel or View.
     init {
         val docRef = db.collection("bars")
