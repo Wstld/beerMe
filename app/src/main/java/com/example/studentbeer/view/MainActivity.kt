@@ -56,6 +56,10 @@ class MainActivity : AppCompatActivity(),
             MainActivityViewModel::class.java
         )
 
+        binding.fabList.setOnClickListener {
+            viewModel.dialogWindow(this)
+        }
+
 
         //mapbundel
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
