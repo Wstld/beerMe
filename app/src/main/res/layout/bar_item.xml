@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="35"
+            android:textColor="@color/black"
+            android:textSize="60sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="5 min"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:drawableStartCompat="@drawable/ic_walk" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvBarName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The Central Bar"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Folkungagatan 57-59"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvOpenHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Öppet till 01:00" />
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+            android:id="@+id/rbBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:isIndicator="false"
+            android:max="5"
+            android:numStars="5"
+            android:stepSize="0.5" />
+
+        <Button
+            android:id="@+id/bDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vägbeskrivning" />
+    </LinearLayout>
+</LinearLayout>

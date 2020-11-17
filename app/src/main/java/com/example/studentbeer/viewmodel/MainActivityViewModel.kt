@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 
 import androidx.lifecycle.ViewModel
+import com.example.studentbeer.R
 
 import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.data.models.BarModel
@@ -67,6 +68,11 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
             }
         }
             dialog.show()
+    }
+
+    fun dialogWindow(context: Context) {
+        val dialog = MaterialAlertDialogBuilder(context).setView(R.layout.bar_item).setBackground(ColorDrawable(Color.TRANSPARENT)).create()
+        dialog.show()
     }
 
 
