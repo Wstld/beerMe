@@ -14,6 +14,7 @@ import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.data.models.BarModel
 
 import com.example.studentbeer.data.models.UserReviewModel
+import com.example.studentbeer.databinding.BarItemBinding
 import com.example.studentbeer.databinding.UserReviewBinding
 import com.google.android.gms.maps.GoogleMap
 
@@ -68,6 +69,23 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
             }
         }
             dialog.show()
+    }
+
+    fun showDialogOnMarkerClick(context: Context, bar: BarModel) {
+        val dialogBinding = BarItemBinding.inflate(LayoutInflater.from(context))
+
+        dialogBinding.apply {
+            tvPrice.text = bar.beerPrice.toString()
+            tvBarName.text = bar.barName
+            tvAddress.text = bar.streetName
+            tvOpenHours.text = bar.openHours
+        }
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(dialogBinding.root)
+            .setBackground(ColorDrawable(Color.WHITE))
+            .create()
+        dialog.show()
     }
 
     fun dialogWindow(context: Context) {
