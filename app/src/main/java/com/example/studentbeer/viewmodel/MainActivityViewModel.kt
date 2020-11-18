@@ -8,14 +8,19 @@ import android.util.Log
 import android.view.LayoutInflater
 
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentbeer.R
 
 import com.example.studentbeer.data.DataRepository
+import com.example.studentbeer.data.TempSingleTon
 import com.example.studentbeer.data.models.BarModel
 
 import com.example.studentbeer.data.models.UserReviewModel
 import com.example.studentbeer.databinding.BarItemBinding
+import com.example.studentbeer.databinding.BarListBinding
 import com.example.studentbeer.databinding.UserReviewBinding
+import com.example.studentbeer.other.adapters.BarRecyclerViewAdapter
+import com.example.studentbeer.other.tools.SpacingItemDecoration
 import com.google.android.gms.maps.GoogleMap
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -79,21 +84,27 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
             tvBarName.text = bar.barName
             tvAddress.text = bar.streetName
             tvOpenHours.text = bar.openHours
-            rbBar.stepSize = bar.rating.toFloat()
+            rbBar.rating = bar.rating.toFloat()
         }
 
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(dialogBinding.root)
-            .setBackground(ColorDrawable(Color.TRANSPARENT))
+            .setBackground(ColorDrawable(Color.WHITE))
             .create()
         dialog.show()
     }
 
     fun dialogWindow(context: Context) {
-        val dialog = MaterialAlertDialogBuilder(context).setView(R.layout.bar_item).setBackground(ColorDrawable(Color.TRANSPARENT)).create()
+        val barList = BarListBinding.inflate(LayoutInflater.from(context))
+        barList.rvBar.apply {
+            addItemDecoration(SpacingItemDecoration(10, 10, 10, 10))
+            adapter = BarRecyclerViewAdapter(TempSingleTon.bars, context)
+            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+        }
+        val dialog = MaterialAlertDialogBuilder(context).setView(barList.root)
+            .setBackground(ColorDrawable(Color.WHITE)).create()
         dialog.show()
     }
-
 
 
 

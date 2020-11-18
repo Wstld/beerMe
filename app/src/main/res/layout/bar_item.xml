@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="20dp">
+    >
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="35"
             android:textColor="@color/black"
-            android:textSize="60sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <TextView
@@ -45,15 +46,13 @@
             android:layout_height="wrap_content"
             android:text="The Central Bar"
             android:textColor="@color/black"
-            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Folkungagatan 57-59"
-            android:textSize="15sp" />
+            android:text="Folkungagatan 57-59" />
 
         <TextView
             android:id="@+id/tvOpenHours"
