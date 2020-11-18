@@ -79,11 +79,12 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
             tvBarName.text = bar.barName
             tvAddress.text = bar.streetName
             tvOpenHours.text = bar.openHours
+            rbBar.stepSize = bar.rating.toFloat()
         }
 
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(dialogBinding.root)
-            .setBackground(ColorDrawable(Color.WHITE))
+            .setBackground(ColorDrawable(Color.TRANSPARENT))
             .create()
         dialog.show()
     }
