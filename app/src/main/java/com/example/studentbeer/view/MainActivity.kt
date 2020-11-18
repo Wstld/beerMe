@@ -15,6 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 
 import com.example.studentbeer.data.DataRepository
+import com.example.studentbeer.data.TempSingleTon
 import com.example.studentbeer.data.models.BarModel
 import com.example.studentbeer.data.models.LocationModel
 import com.example.studentbeer.databinding.ActivityMainBinding
@@ -32,7 +33,7 @@ import kotlin.concurrent.thread
 import kotlin.math.log
 const val LOCATION_REQUEST = 1
 class MainActivity : AppCompatActivity(),
-    GoogleMap.OnMarkerClickListener{
+    GoogleMap.OnMarkerClickListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var googleMap: GoogleMap
@@ -99,7 +100,9 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
-        marker?.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+        if (marker != null) {
+            viewModel.showDialogOnMarkerClick(this, marker.tag as BarModel)
+        }
         return false
     }
 
@@ -168,7 +171,6 @@ class MainActivity : AppCompatActivity(),
         )== PackageManager.PERMISSION_GRANTED
 
 
-
     fun updateMap(map: GoogleMap, list:List<BarModel>){
         map.clear()
         list.forEach {
@@ -183,7 +185,10 @@ class MainActivity : AppCompatActivity(),
 
             ).tag = bar
         }
+        map.setOnMarkerClickListener(this)
     }
+
+
     fun updateMapPosition(pos:LocationModel){
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
