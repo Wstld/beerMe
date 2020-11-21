@@ -4,9 +4,11 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4432e9fc08eb83ae2ded4dfd7c327867/jetified-protolite-well-known-types-17.1.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/eac4ec19cf5202f175dd803f1da67ada/jetified-protolite-well-known-types-17.1.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6114e46749798a1e6274d71893954207/jetified-protolite-well-known-types-17.1.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/679663c72189a3a50ba4bb05a1fa20a8/jetified-protolite-well-known-types-17.1.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/679663c72189a3a50ba4bb05a1fa20a8/jetified-protolite-well-known-types-17.1.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/679663c72189a3a50ba4bb05a1fa20a8/jetified-protolite-well-known-types-17.1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/72725c63741d555e290936805d893dc8/jetified-protolite-well-known-types-17.1.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/db0836277aeb91c8cebc337c4d467d8f/jetified-protolite-well-known-types-17.1.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/72725c63741d555e290936805d893dc8/jetified-protolite-well-known-types-17.1.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/72725c63741d555e290936805d893dc8/jetified-protolite-well-known-types-17.1.0/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.firebase/protolite-well-known-types/17.1.0/72e5bbce8d93977dd75b99c02c8aba1b841a9de6/protolite-well-known-types-17.1.0-javadoc.jar!/" />

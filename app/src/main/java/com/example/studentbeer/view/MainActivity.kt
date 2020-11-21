@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 
 import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.data.TempSingleTon
@@ -200,11 +201,11 @@ class MainActivity : AppCompatActivity(),
         binding.mapView.getMapAsync{map ->
             googleMap = map
             mapReady = true
-            viewModel.getAllBars().observe(this,{
+            viewModel.getAllBars().observe(this) {
                 if(it.isNotEmpty()){
-                    updateMap(map=map,it)
+                    updateMap(map=map, list = it)
                 }
-            })
+            }
             //sets default map camera position
             updateMapPosition(location)
 
@@ -216,20 +217,20 @@ class MainActivity : AppCompatActivity(),
     }
     @SuppressLint("MissingPermission")
     private fun setLocationListner(){
-        viewModel.currentPos.observe(this,
-            {
-                //observese changes in location and sets location varible to current.
-                location = it
-                //if map is not zoomed to user location on startup this will fire
-                if (!userLocationZoomSet&&isPermissionsGranted()){
-                    updateMapPosition(location)
-                    googleMap.isMyLocationEnabled = true
-                    //sets notifies observer that location on startup has already been set.
-                    userLocationZoomSet = true
-                    //stops location updates.
-                    viewModel.currentPos.stopLocationUpdates()
-                }
-            })
+        viewModel.currentPos.observe(this
+        ) {
+            //observese changes in location and sets location varible to current.
+            location = it
+            //if map is not zoomed to user location on startup this will fire
+            if (!userLocationZoomSet&&isPermissionsGranted()){
+                updateMapPosition(location)
+                googleMap.isMyLocationEnabled = true
+                //sets notifies observer that location on startup has already been set.
+                userLocationZoomSet = true
+                //stops location updates.
+                viewModel.currentPos.stopLocationUpdates()
+            }
+        }
     }
 
 
