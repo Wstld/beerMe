@@ -74,6 +74,8 @@
             android:id="@+id/bDirection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vägbeskrivning" />
+            android:backgroundTint="#4B668E"
+            android:text="Vägbeskrivning"
+            android:textAllCaps="false" />
     </LinearLayout>
 </LinearLayout>
