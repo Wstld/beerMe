@@ -2,18 +2,12 @@ package com.example.studentbeer.data
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.observe
 import com.example.studentbeer.data.models.BarModel
-import com.example.studentbeer.data.models.LocationModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.studentbeer.data.models.apiresponse.DirectionsModel
+import com.example.studentbeer.util.RetrofitInstance
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
 
 
 class DataRepository(application: Application) {
@@ -21,7 +15,10 @@ class DataRepository(application: Application) {
     private val successTag: String = "!!!"
     private val errorTag: String = "@@@"
 
-
+    //Retrofit call
+    suspend fun getDirections(start:String,end:String): DirectionsModel{
+        return RetrofitInstance.api.getDirections(start,end)
+    }
 
 
     // FireStore

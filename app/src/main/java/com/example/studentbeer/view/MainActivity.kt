@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity(),
         )
 
         binding.fabList.setOnClickListener {
-            viewModel.dialogWindow(this)
+           viewModel.getDirections(location.lat,location.long,59.27145,18.04777)
+            // viewModel.dialogWindow(this)
         }
 
 

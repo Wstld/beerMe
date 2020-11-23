@@ -6,8 +6,10 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
+import androidx.lifecycle.MutableLiveData
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentbeer.R
 
@@ -24,10 +26,24 @@ import com.example.studentbeer.other.tools.SpacingItemDecoration
 import com.google.android.gms.maps.GoogleMap
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.type.LatLng
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.internal.wait
+import java.lang.StringBuilder
 
 
 class MainActivityViewModel(private val dataRepository: DataRepository) : ViewModel() {
     val currentPos = dataRepository.liveLocationData
+
+    fun getDirections(startLat:Double,startLng:Double,endLat:Double,endLng:Double){
+        val start = "$startLat,$startLng"
+        val end = "$endLat,$endLng"
+        viewModelScope.launch(Dispatchers.IO) {
+            val direction = dataRepository.getDirections(start,end)
+            Log.d("DIRECTION", "getDirections:${direction.routes[0].overviewPolyline} ")
+        }
+    }
 
  fun getAllBars() = dataRepository.liveBarList
     //clears the map
@@ -106,6 +122,9 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         dialog.show()
     }
 
-
-
+/*    "https://maps.googleapis.com/maps/api/directions/json?
+    origin=59.27117,18.04926        +&
+    destination=59.27145,18.04777  +&
+    mode=walking                    +&
+    key=AIzaSyBFA8D_UGwVkXwDweuRxYiTmmal_kfPcwM"*/
 }
