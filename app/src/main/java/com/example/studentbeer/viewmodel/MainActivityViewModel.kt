@@ -81,7 +81,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         if (bar != null){
         val reviewBinding = UserReviewBinding.inflate(LayoutInflater.from(context))
 
-        val dialog = MaterialAlertDialogBuilder(context)
+        val dialog = MaterialAlertDialogBuilder(context,R.style.Theme_AppCompat_Light_Dialog_Alert)
             .setView(reviewBinding.root)
             .setBackground(ColorDrawable(Color.TRANSPARENT))
             .create()

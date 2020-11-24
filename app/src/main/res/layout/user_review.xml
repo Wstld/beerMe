@@ -3,11 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:isScrollContainer="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/user_review_card"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
 
         app:cardCornerRadius="15dp"
         app:cardElevation="3dp"
@@ -46,7 +47,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/user_price_input_card"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/user_review_card"
         android:layout_marginTop="10dp"
         app:cardCornerRadius="15dp"
@@ -118,23 +119,15 @@
                     android:layout_gravity="center"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.card.MaterialCardView>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/user_price_input_card"
-        android:layout_marginTop="10dp"
-        android:gravity="center">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/send_review_btn"
+            app:layout_constraintTop_toBottomOf="@id/user_price_input_card"
+            app:layout_constraintEnd_toEndOf="@id/user_price_input_card"
+            app:layout_constraintStart_toStartOf="@id/user_price_input_card"
             app:icon="@drawable/ic_ok_btn"
             app:iconGravity="textStart"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            app:layout_constraintLeft_toLeftOf="parent"
             />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

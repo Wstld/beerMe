@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity(),
                 //if navigation is clicked this will fire on location update
                 viewModel.isNavClicked ->{
 
-                    if (viewModel.enroutToBar!=null&&viewModel.haversineFormula(location.lat,location.long,viewModel.enroutToBar!!.latitude,viewModel.enroutToBar!!.longitude)<0.02){
+                    if (viewModel.enroutToBar!=null&&viewModel.haversineFormula(location.lat,location.long,viewModel.enroutToBar!!.latitude,viewModel.enroutToBar!!.longitude)<0.04){
                         viewModel.visistedBar = viewModel.enroutToBar
                         viewModel.enroutToBar = null
                         viewModel.isNavClicked = false
