@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(),
         )
 
         binding.fabList.setOnClickListener {
-             viewModel.dialogWindow(this)
+             viewModel.dialogWindow(this,binding.fabList,binding.fabEndNav,googleMap)
         }
 
 
@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity(),
             }
         return false
     }
-
 
     override fun onPause() {
         super.onPause()

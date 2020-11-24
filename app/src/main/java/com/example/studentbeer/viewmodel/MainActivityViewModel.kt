@@ -1,6 +1,7 @@
 package com.example.studentbeer.viewmodel
 
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.dialog.MaterialDialogs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.maps.android.PolyUtil
 import kotlinx.coroutines.*
@@ -149,8 +151,6 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                 }
             }
         }
-
-
         dialog.setView(dialogBinding.root)
         dialog.show()
     }
@@ -170,17 +170,30 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
     }
 
-    fun dialogWindow(context: Context) {
+    fun dialogWindow(context: Context,listBtn:FloatingActionButton,endNavBtn: FloatingActionButton,map: GoogleMap) {
+        val dialog = MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.WHITE)).create()
         val barList = BarListBinding.inflate(LayoutInflater.from(context))
         barList.rvBar.apply {
             addItemDecoration(SpacingItemDecoration(10, 10, 10, 10))
-            adapter = BarRecyclerViewAdapter(TempSingleTon.bars, context)
+            adapter = BarRecyclerViewAdapter(TempSingleTon.bars, context,onClickedNavBtn = {bar -> onRecyclerButtonClick(bar,dialog = dialog,endNavBtn,listBtn,map)},{barLat,barLong->getDirections(currentPos.value!!.lat,currentPos.value!!.long,barLat,barLong)})
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
         }
-        val dialog = MaterialAlertDialogBuilder(context).setView(barList.root)
-            .setBackground(ColorDrawable(Color.WHITE)).create()
+        dialog.setView(barList.root)
         dialog.show()
     }
+    fun onRecyclerButtonClick(bar:BarModel,dialog:androidx.appcompat.app.AlertDialog,endNavBtn: FloatingActionButton,lisBtn: FloatingActionButton,map: GoogleMap){
+        lisBtn.visibility = View.GONE
+        endNavBtn.visibility = View.VISIBLE
+        enroutToBar = bar
+        isNavClicked = true
+        val directions = getDirections(currentPos.value!!.lat,currentPos.value!!.long,bar.latitude,bar.longitude)
+        val polyline = getPolyLine(directions)
+        map.addPolyline(polyline)
+        dialog.cancel()
+    }
+
+
+
 
 
     //returns distans between two latLng in km
