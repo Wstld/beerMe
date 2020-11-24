@@ -93,6 +93,15 @@ object TempSingleTon {
             "15:00-03:00",
             3.0,
             35
+        ),
+        BarModel(
+            "My House",
+            59.27128,
+            18.04937,
+            "Norrlandsgatan 23, mälartorget 13, 111 43 Stockholm",
+            "15:00-03:00",
+            3.0,
+            35
         )
     )
 }
