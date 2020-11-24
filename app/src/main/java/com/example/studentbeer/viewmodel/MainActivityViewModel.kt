@@ -112,7 +112,10 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
             }
         }
-            dialog.setOnDismissListener { isNavClicked = false }
+            dialog.setOnDismissListener {
+                isNavClicked = false
+                visistedBar = null
+            }
             dialog.show()}
         else return
     }
