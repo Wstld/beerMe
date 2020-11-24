@@ -74,7 +74,12 @@ class MainActivity : AppCompatActivity(),
 
         //endnavigation button
         binding.fabEndNav.setOnClickListener {
-            Toast.makeText(this, "END NAV", Toast.LENGTH_SHORT).show()
+            viewModel.enroutToBar = null
+            viewModel.isNavClicked = false
+            userLocationZoomSet = false
+            binding.fabList.visibility = View.VISIBLE
+            it.visibility = View.GONE
+            initMap()
         }
 
 
