@@ -8,12 +8,14 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import com.example.studentbeer.R
 
 import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.data.TempSingleTon
@@ -32,6 +34,8 @@ import com.google.maps.android.ui.IconGenerator
 import kotlinx.coroutines.*
 import kotlin.concurrent.thread
 import kotlin.math.log
+import kotlin.math.pow
+
 const val LOCATION_REQUEST = 1
 class MainActivity : AppCompatActivity(),
     GoogleMap.OnMarkerClickListener {
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity(),
     private var location: LocationModel = LocationModel(59.31159,18.030053)
     private var mapReady = false
     private var userLocationZoomSet = false
+
 
 
 
@@ -59,14 +64,18 @@ class MainActivity : AppCompatActivity(),
         )
 
         binding.fabList.setOnClickListener {
-           viewModel.getDirections(location.lat,location.long,59.27145,18.04777)
-            // viewModel.dialogWindow(this)
+             viewModel.dialogWindow(this)
         }
 
 
         //mapbundel
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
+
+        //endnavigation button
+        binding.fabEndNav.setOnClickListener {
+            Toast.makeText(this, "END NAV", Toast.LENGTH_SHORT).show()
+        }
 
 
     }
@@ -88,6 +97,9 @@ class MainActivity : AppCompatActivity(),
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
+        if (viewModel.visistedBar!=null){
+            runBlocking {  viewModel.getUserReview(this@MainActivity) }
+        }
         //restores not set on position value on restart.
         userLocationZoomSet = false
         initMap()
@@ -100,13 +112,14 @@ class MainActivity : AppCompatActivity(),
         binding.mapView.onStop()
 
     }
-
     override fun onMarkerClick(marker: Marker?): Boolean {
         if (marker != null) {
-            viewModel.showDialogOnMarkerClick(this, marker.tag as BarModel)
-        }
+            val currentBar = marker.tag as BarModel
+            viewModel.showDialogOnMarkerClick(this,currentBar,googleMap,binding.fabEndNav,binding.fabList)
+            }
         return false
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -213,26 +226,59 @@ class MainActivity : AppCompatActivity(),
             //ask for location grant, if user agrees to this setlocation() observes user location and updates position of camera to this once.
             askForlocationPremission()
 
+            //If bar navigation was not completed.
+            if (viewModel.enroutToBar!=null){
+                val directions = viewModel.getDirections(location.lat,location.long,viewModel.enroutToBar!!.latitude,viewModel.enroutToBar!!.longitude)
+                val polyline = viewModel.getPolyLine(directions)
+                map.addPolyline(polyline)
+                binding.fabEndNav.visibility = View.VISIBLE
+                binding.fabList.visibility = View.GONE
+            }
+            //
+
 
         }
     }
+
+
     @SuppressLint("MissingPermission")
     private fun setLocationListner(){
+        if (isPermissionsGranted())
         viewModel.currentPos.observe(this
         ) {
             //observese changes in location and sets location varible to current.
-            location = it
-            //if map is not zoomed to user location on startup this will fire
-            if (!userLocationZoomSet&&isPermissionsGranted()){
-                updateMapPosition(location)
-                googleMap.isMyLocationEnabled = true
-                //sets notifies observer that location on startup has already been set.
-                userLocationZoomSet = true
-                //stops location updates.
-                viewModel.currentPos.stopLocationUpdates()
+          location = it
+
+            when{
+                !userLocationZoomSet ->{
+
+                        updateMapPosition(location)
+                        googleMap.isMyLocationEnabled = true
+                        //sets notifies observer that location on startup has already been set.
+                        userLocationZoomSet = true
+
+                }
+                //if navigation is clicked this will fire on location update
+                viewModel.isNavClicked ->{
+
+                    if (viewModel.enroutToBar!=null&&viewModel.haversineFormula(location.lat,location.long,viewModel.enroutToBar!!.latitude,viewModel.enroutToBar!!.longitude)<0.02){
+                        viewModel.visistedBar = viewModel.enroutToBar
+                        viewModel.enroutToBar = null
+                        viewModel.isNavClicked = false
+                        initMap()
+                        binding.fabEndNav.visibility = View.GONE
+                        binding.fabList.visibility = View.VISIBLE
+                        Toast.makeText(this, R.string.arrived_at_destination, Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+
             }
+
         }
     }
+
+
 
 
     companion object {

@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.studentbeer.data.models.BarModel
-import com.example.studentbeer.data.models.apiresponse.DirectionsModel
+import com.example.studentbeer.data.models.apiResponse.DirectionsModel
 import com.example.studentbeer.util.RetrofitInstance
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

@@ -1,9 +1,9 @@
-package com.example.studentbeer.data.models.apiresponse
+package com.example.studentbeer.data.models.apiResponse
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Southwest(
+data class EndLocation(
     @SerializedName("lat")
     val lat: Double,
     @SerializedName("lng")

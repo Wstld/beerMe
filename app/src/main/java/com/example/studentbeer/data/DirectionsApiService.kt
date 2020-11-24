@@ -1,6 +1,6 @@
 package com.example.studentbeer.data
 
-import com.example.studentbeer.data.models.apiresponse.DirectionsModel
+import com.example.studentbeer.data.models.apiResponse.DirectionsModel
 import retrofit2.http.GET
 import retrofit2.http.Query
 

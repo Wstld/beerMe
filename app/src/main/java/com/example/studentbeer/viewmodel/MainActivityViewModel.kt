@@ -4,48 +4,66 @@ package com.example.studentbeer.viewmodel
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.opengl.Visibility
 import android.util.Log
 import android.view.LayoutInflater
-import androidx.lifecycle.MutableLiveData
+import android.view.View
+import android.widget.Toast
+import androidx.annotation.UiThread
+
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentbeer.R
 
+
 import com.example.studentbeer.data.DataRepository
 import com.example.studentbeer.data.TempSingleTon
 import com.example.studentbeer.data.models.BarModel
 
 import com.example.studentbeer.data.models.UserReviewModel
+import com.example.studentbeer.data.models.apiResponse.DirectionsModel
 import com.example.studentbeer.databinding.BarItemBinding
 import com.example.studentbeer.databinding.BarListBinding
 import com.example.studentbeer.databinding.UserReviewBinding
 import com.example.studentbeer.other.adapters.BarRecyclerViewAdapter
 import com.example.studentbeer.other.tools.SpacingItemDecoration
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.type.LatLng
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.maps.android.PolyUtil
+import kotlinx.coroutines.*
+
 import okhttp3.internal.wait
-import java.lang.StringBuilder
+import kotlin.math.log
 
 
 class MainActivityViewModel(private val dataRepository: DataRepository) : ViewModel() {
     val currentPos = dataRepository.liveLocationData
+    var isNavClicked = false
+    var visistedBar:BarModel? = null
+    var enroutToBar:BarModel? = null
 
-    fun getDirections(startLat:Double,startLng:Double,endLat:Double,endLng:Double){
-        val start = "$startLat,$startLng"
-        val end = "$endLat,$endLng"
-        viewModelScope.launch(Dispatchers.IO) {
-            val direction = dataRepository.getDirections(start,end)
-            Log.d("DIRECTION", "getDirections:${direction.routes[0].overviewPolyline} ")
+    fun getDirections(startLat:Double,startLng:Double,endLat:Double,endLng:Double):DirectionsModel?{
+            val start = "$startLat,$startLng"
+            val end = "$endLat,$endLng"
+            var directionsModel:DirectionsModel? = null
+
+            val directions = GlobalScope.async { dataRepository.getDirections(start, end) }
+        runBlocking {
+             directionsModel = directions.await()
         }
+
+      return directionsModel
     }
 
- fun getAllBars() = dataRepository.liveBarList
+    fun getAllBars() = dataRepository.liveBarList
     //clears the map
     fun test(map:GoogleMap) {
         map.clear()
@@ -56,7 +74,9 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         Log.d("userREVIEW", "sendUserReview: ${userReview.barName} rating:${userReview.userRating} barid:${userReview.barFireBaseId} price:${userReview.userDefinedBeerPrice} ")
     }
 
-    fun getUserReview(context: Context,bar:BarModel){
+    fun getUserReview(context: Context){
+        val bar = visistedBar
+        if (bar != null){
         val reviewBinding = UserReviewBinding.inflate(LayoutInflater.from(context))
 
         val dialog = MaterialAlertDialogBuilder(context)
@@ -86,28 +106,65 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                         userRating = userReviewCardUserRating.rating.toDouble(),
                         userDefinedBeerPrice = userPriceInputCardBeerPrice.text.toString().toInt()
                     ))
-                dialog.dismiss()
+                isNavClicked = false
+                visistedBar = null
+                dialog.cancel()
+
             }
         }
-            dialog.show()
+            dialog.setOnDismissListener { isNavClicked = false }
+            dialog.show()}
+        else return
     }
 
-    fun showDialogOnMarkerClick(context: Context, bar: BarModel) {
+    fun showDialogOnMarkerClick(context: Context, bar: BarModel,map: GoogleMap,endNavBtn:FloatingActionButton,lisBtn:FloatingActionButton) {
+        val directions = getDirections(currentPos.value!!.lat,currentPos.value!!.long,bar.latitude,bar.longitude)
         val dialogBinding = BarItemBinding.inflate(LayoutInflater.from(context))
-
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setBackground(ColorDrawable(Color.WHITE))
+            .create()
         dialogBinding.apply {
             tvPrice.text = bar.beerPrice.toString()
             tvBarName.text = bar.barName
             tvAddress.text = bar.streetName
             tvOpenHours.text = bar.openHours
+            tvDistance.text = "${directions?.routes?.get(0)?.legs?.get(0)?.duration?.text}"?:"Cant find duration"
             rbBar.rating = bar.rating.toFloat()
+            bDirection.setOnClickListener {
+                if (currentPos.value != null){
+                    val myPos = LatLng(currentPos.value!!.lat,currentPos.value!!.long)
+                    val polyLine = getPolyLine(directions)
+                    if(polyLine != null )map.addPolyline(polyLine)
+                    map.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(myPos,16f)
+                    )
+                    endNavBtn.visibility = View.VISIBLE
+                    lisBtn.visibility = View.GONE
+                    isNavClicked = true
+                    enroutToBar = bar
+                dialog.dismiss()
+                }
+            }
         }
 
-        val dialog = MaterialAlertDialogBuilder(context)
-            .setView(dialogBinding.root)
-            .setBackground(ColorDrawable(Color.WHITE))
-            .create()
+
+        dialog.setView(dialogBinding.root)
         dialog.show()
+    }
+
+    fun getPolyLine(directions: DirectionsModel?): PolylineOptions? {
+        if (directions!=null){
+            val polylineOptions = PolylineOptions()
+            val latLng = mutableListOf<List<LatLng>>()
+            directions.routes[0].legs[0].steps.forEach {
+                latLng.add(PolyUtil.decode(it.polyline.points))
+            }
+            latLng.forEach {
+                polylineOptions.addAll(it)
+            }
+            return polylineOptions
+        }else return null
+
     }
 
     fun dialogWindow(context: Context) {
@@ -122,9 +179,17 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         dialog.show()
     }
 
-/*    "https://maps.googleapis.com/maps/api/directions/json?
-    origin=59.27117,18.04926        +&
-    destination=59.27145,18.04777  +&
-    mode=walking                    +&
-    key=AIzaSyBFA8D_UGwVkXwDweuRxYiTmmal_kfPcwM"*/
+
+    //returns distans between two latLng in km
+    fun haversineFormula(fromLat:Double,fromLong:Double,toLat:Double,toLong:Double):Double{
+        val earthRad = 6372.8
+        val dLat = Math.toRadians(toLat - fromLat)
+        val dLon = Math.toRadians(toLong - fromLong)
+
+        val a = Math.pow(Math.sin(dLat / 2), 2.toDouble()) + Math.pow(Math.sin(dLon / 2), 2.toDouble()) * Math.cos(fromLat) * Math.cos(toLat)
+        val c = 2 * Math.asin(Math.sqrt(a))
+        return earthRad * c
+    }
+
+
 }
