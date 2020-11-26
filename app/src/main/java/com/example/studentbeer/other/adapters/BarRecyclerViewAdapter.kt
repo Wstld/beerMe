@@ -27,7 +27,6 @@ class BarRecyclerViewAdapter(
             if (direction != null) {
                 binding.tvDistance.text = direction.routes[0].legs[0].duration.text
             }
-            binding.llContainer.setBackgroundResource(R.drawable.stroke_custom_bg)
             binding.tvBarName.text = bar.barName
             binding.tvAddress.text = bar.streetName
             binding.tvOpenHours.text = bar.openHours
