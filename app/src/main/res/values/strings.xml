@@ -3,4 +3,11 @@
     <string name="rating_question">Hur var ditt besök på</string>
     <string name="price_question">Vad kostade en storstark på</string>
     <string name="arrived_at_destination">"Du är framme!"</string>
+    <string-array name="filters">
+        <item>Bars</item>
+        <item>Name</item>
+        <item>Price</item>
+        <item>Rating</item>
+        <item>Distance</item>
+    </string-array>
 </resources>

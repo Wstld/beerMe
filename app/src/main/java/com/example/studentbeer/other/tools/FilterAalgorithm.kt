@@ -1,41 +1,38 @@
 package com.example.studentbeer.other.tools
 
-import android.location.Location
-import com.google.android.gms.maps.model.LatLng
-import kotlin.math.PI
-import kotlin.math.cos
+import com.example.studentbeer.data.models.BarFinishedModel
 
 
-// It's not finished.
-class FilterAlgorithm() {
+object FilterAlgorithm {
 
-    private val earthRadius: Int = 6378
-
-    private fun newLatitude(position: LatLng, distance: Int): Double {
-        val meterInDegree = (1 / ((2 * PI / 360) * earthRadius)) / 1000
-        return position.latitude + (distance * meterInDegree)
+    fun sortByPrice(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+        list.sortBy {
+            it.bar.beerPrice
+        }
+        return list
     }
 
-    private fun newLongitude(position: LatLng, distance: Int): Double {
-        val meterInDegree = (1 / ((2 * PI / 360) * earthRadius)) / 1000
-        return position.longitude + (distance * meterInDegree) / cos(position.latitude * (PI / 180))
+    fun sortByRating(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+        list.sortBy {
+            it.bar.rating
+        }
+        list.reverse()
+        return list
     }
 
-    fun getNewLatLng(position: LatLng, distance: Int): String {
-        return "${newLatitude(position, distance)}, ${newLongitude(position, distance)}"
+    fun sortByName(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+        list.sortBy {
+            it.bar.barName
+        }
+        return list
     }
 
-    fun calculateTimeBetweenLatLngs(currentPosition: LatLng, destination: LatLng): Float {
-        val results: FloatArray = floatArrayOf()
-        val humanNormalSpeedInKmPerHour = 4.82
-        Location.distanceBetween(
-            currentPosition.latitude,
-            currentPosition.longitude,
-            destination.latitude,
-            destination.longitude,
-            results
-        )
-        return results[1]
-
+    // inte klar än.
+    fun sortByDistance(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+        list.sortBy {
+            it.distanceInValue
+        }
+        return list
     }
+
 }
