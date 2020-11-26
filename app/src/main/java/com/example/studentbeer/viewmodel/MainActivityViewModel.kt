@@ -126,7 +126,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         val directions = getDirections(currentPos.value!!.lat,currentPos.value!!.long,bar.latitude,bar.longitude)
         val dialogBinding = BarItemBinding.inflate(LayoutInflater.from(context))
         val dialog = MaterialAlertDialogBuilder(context)
-            .setBackground(ColorDrawable(Color.WHITE))
+            .setBackground(ColorDrawable(Color.TRANSPARENT))
             .create()
         dialogBinding.apply {
             tvPrice.text = bar.beerPrice.toString()
@@ -171,7 +171,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     }
 
     fun dialogWindow(context: Context,listBtn:FloatingActionButton,endNavBtn: FloatingActionButton,map: GoogleMap) {
-        val dialog = MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.WHITE)).create()
+        val dialog = MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.TRANSPARENT)).create()
         val barList = BarListBinding.inflate(LayoutInflater.from(context))
         barList.rvBar.apply {
             addItemDecoration(SpacingItemDecoration(10, 10, 10, 10))
