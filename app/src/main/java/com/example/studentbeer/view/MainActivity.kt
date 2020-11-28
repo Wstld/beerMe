@@ -2,39 +2,26 @@ package com.example.studentbeer.view
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.studentbeer.R
 
-import com.example.studentbeer.data.DataRepository
-import com.example.studentbeer.data.TempSingleTon
 import com.example.studentbeer.data.models.BarModel
 import com.example.studentbeer.data.models.LocationModel
 import com.example.studentbeer.databinding.ActivityMainBinding
-import com.example.studentbeer.util.MainActivityViewModelFactory
 import com.example.studentbeer.util.UtilInject
 import com.example.studentbeer.viewmodel.MainActivityViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import com.google.maps.android.ui.BubbleIconFactory
 import com.google.maps.android.ui.IconGenerator
 import kotlinx.coroutines.*
-import kotlin.concurrent.thread
-import kotlin.math.log
-import kotlin.math.pow
 
 const val LOCATION_REQUEST = 1
 class MainActivity : AppCompatActivity(),
@@ -68,7 +55,7 @@ class MainActivity : AppCompatActivity(),
         }
 
 
-        //mapbundel
+        //mapbundle
         val mapViewBundle = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         binding.mapView.onCreate(mapViewBundle)
 
@@ -155,19 +142,19 @@ class MainActivity : AppCompatActivity(),
             LOCATION_REQUEST -> {
                 //if user accepts request the observer will fire. Otherwise the initMap function continues.
                 if (!grantResults.contains(-1)) {
-                    setLocationListner()
+                    setLocationListener()
                 }
             }
         }
     }
 
-    //ask for premission if not granted
+    //ask for permission if not granted
 
-    private fun askForlocationPremission() {
+    private fun askForlocationPermission() {
        when {
            //if we have location permission this will start observer.
            isPermissionsGranted() -> {
-               setLocationListner()
+               setLocationListener()
            }
            //if not we'll ask for it.
             else  -> {
@@ -228,7 +215,7 @@ class MainActivity : AppCompatActivity(),
             updateMapPosition(location)
 
             //ask for location grant, if user agrees to this setlocation() observes user location and updates position of camera to this once.
-            askForlocationPremission()
+            askForlocationPermission()
 
             //If bar navigation was not completed.
             if (viewModel.enroutToBar!=null){
@@ -246,11 +233,11 @@ class MainActivity : AppCompatActivity(),
 
 
     @SuppressLint("MissingPermission")
-    private fun setLocationListner(){
+    private fun setLocationListener(){
         if (isPermissionsGranted())
         viewModel.currentPos.observe(this
         ) {
-            //observese changes in location and sets location varible to current.
+            //observes changes in location and sets location variable to current.
           location = it
 
             when{

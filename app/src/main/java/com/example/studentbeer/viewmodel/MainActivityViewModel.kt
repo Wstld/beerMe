@@ -296,7 +296,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     }
 
 
-    //returns distans between two latLng in km
+    //returns distance between two latLng in km
     fun haversineFormula(fromLat: Double, fromLong: Double, toLat: Double, toLong: Double): Double {
         val earthRad = 6372.8
         val dLat = Math.toRadians(toLat - fromLat)
