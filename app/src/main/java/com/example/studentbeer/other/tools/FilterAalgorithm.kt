@@ -1,18 +1,18 @@
 package com.example.studentbeer.other.tools
 
-import com.example.studentbeer.data.models.BarFinishedModel
+import com.example.studentbeer.data.models.BarAndDistanceModel
 
 
 object FilterAlgorithm {
 
-    fun sortByPrice(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+    fun sortByPrice(list: MutableList<BarAndDistanceModel>): MutableList<BarAndDistanceModel> {
         list.sortBy {
             it.bar.beerPrice
         }
         return list
     }
 
-    fun sortByRating(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+    fun sortByRating(list: MutableList<BarAndDistanceModel>): MutableList<BarAndDistanceModel> {
         list.sortBy {
             it.bar.rating
         }
@@ -20,7 +20,7 @@ object FilterAlgorithm {
         return list
     }
 
-    fun sortByName(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+    fun sortByName(list: MutableList<BarAndDistanceModel>): MutableList<BarAndDistanceModel> {
         list.sortBy {
             it.bar.barName
         }
@@ -28,7 +28,7 @@ object FilterAlgorithm {
     }
 
     // inte klar än.
-    fun sortByDistance(list: MutableList<BarFinishedModel>): MutableList<BarFinishedModel> {
+    fun sortByDistance(list: MutableList<BarAndDistanceModel>): MutableList<BarAndDistanceModel> {
         list.sortBy {
             it.distanceInValue
         }

@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentbeer.R
-import com.example.studentbeer.data.models.BarFinishedModel
+import com.example.studentbeer.data.models.BarAndDistanceModel
 import com.example.studentbeer.data.models.BarModel
 import com.example.studentbeer.databinding.BarItemBinding
 
 class BarRecyclerViewAdapter(
-    private var bars: MutableList<BarFinishedModel>,
+    private var bars: MutableList<BarAndDistanceModel>,
     private val context: Context,
     val onClickedNavBtn: (BarModel) -> Unit,
 ) : RecyclerView.Adapter<BarRecyclerViewAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = BarItemBinding.bind(view)
-        fun bindItems(bar: BarFinishedModel) {
+        fun bindItems(bar: BarAndDistanceModel) {
             binding.tvBarName.text = bar.bar.barName
             binding.tvAddress.text = bar.bar.streetName
             binding.tvDistance.text = bar.distanceInTime

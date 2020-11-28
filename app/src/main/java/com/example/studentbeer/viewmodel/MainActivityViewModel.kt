@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentbeer.R
 import com.example.studentbeer.data.DataRepository
-import com.example.studentbeer.data.models.BarFinishedModel
+import com.example.studentbeer.data.models.BarAndDistanceModel
 import com.example.studentbeer.data.models.BarModel
 import com.example.studentbeer.data.models.UserReviewModel
 import com.example.studentbeer.data.models.apiResponse.DirectionsModel
@@ -40,10 +40,10 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     AdapterView.OnItemSelectedListener {
     val currentPos = dataRepository.liveLocationData
     var isNavClicked = false
-    var visistedBar: BarModel? = null
-    var enroutToBar: BarModel? = null
+    var visitedBar: BarModel? = null
+    var enrouteToBar: BarModel? = null
     var rvBar: RecyclerView? = null
-    private var barFinishedModelList: MutableList<BarFinishedModel>? = null
+    private var barAndDistanceModelList: MutableList<BarAndDistanceModel>? = null
 
     fun getDirections(
         startLat: Double,
@@ -65,8 +65,8 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
     fun getAllBars() = dataRepository.liveBarList
 
-    private fun getBarFinishedList(): MutableList<BarFinishedModel> {
-        val list: MutableList<BarFinishedModel> = mutableListOf()
+    private fun getBarAndDistanceList(): MutableList<BarAndDistanceModel> {
+        val list: MutableList<BarAndDistanceModel> = mutableListOf()
         getAllBars().value!!.forEach {
             val directions = getDirections(
                 currentPos.value!!.lat,
@@ -74,10 +74,14 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                 it.latitude,
                 it.longitude
             )
-            val distanceInTime = directions!!.routes[0].legs[0].duration.text
-            val distanceInValue = directions.routes[0].legs[0].duration.value
-            val currentObject = BarFinishedModel(distanceInTime, distanceInValue, it)
-            list.add(currentObject)
+
+            if (directions!!.routes.size > 0) {
+                val distanceInTime = directions!!.routes[0].legs[0].duration.text
+                val distanceInValue = directions.routes[0].legs[0].duration.value
+                val currentObject = BarAndDistanceModel(distanceInTime, distanceInValue, it)
+                list.add(currentObject)
+            }
+
         }
         return list
     }
@@ -97,7 +101,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     }
 
     fun getUserReview(context: Context) {
-        val bar = visistedBar
+        val bar = visitedBar
         if (bar != null) {
             val reviewBinding = UserReviewBinding.inflate(LayoutInflater.from(context))
 
@@ -132,14 +136,14 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                         )
                     )
                     isNavClicked = false
-                    visistedBar = null
+                    visitedBar = null
                     dialog.cancel()
 
                 }
             }
             dialog.setOnDismissListener {
                 isNavClicked = false
-                visistedBar = null
+                visitedBar = null
             }
             dialog.show()
         } else return
@@ -181,7 +185,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                     endNavBtn.visibility = View.VISIBLE
                     lisBtn.visibility = View.GONE
                     isNavClicked = true
-                    enroutToBar = bar
+                    enrouteToBar = bar
                     dialog.dismiss()
                 }
             }
@@ -211,7 +215,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         endNavBtn: FloatingActionButton,
         map: GoogleMap
     ) {
-        barFinishedModelList = getBarFinishedList()
+        barAndDistanceModelList = getBarAndDistanceList()
         val dialog =
             MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.TRANSPARENT)).create()
         val barList = BarListBinding.inflate(LayoutInflater.from(context))
@@ -226,7 +230,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         barList.rvBar.apply {
             addItemDecoration(SpacingItemDecoration(10, 10, 10, 10))
             adapter = BarRecyclerViewAdapter(
-                barFinishedModelList!!,
+                barAndDistanceModelList!!,
                 context,
                 onClickedNavBtn = { bar ->
                     onRecyclerButtonClick(
@@ -251,19 +255,19 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
             }
             1 -> {
-                barFinishedModelList = FilterAlgorithm.sortByName(barFinishedModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByName(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             2 -> {
-                barFinishedModelList = FilterAlgorithm.sortByPrice(barFinishedModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByPrice(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             3 -> {
-                barFinishedModelList = FilterAlgorithm.sortByRating(barFinishedModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByRating(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             4 -> {
-                barFinishedModelList = FilterAlgorithm.sortByDistance(barFinishedModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByDistance(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
         }
@@ -282,7 +286,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     ) {
         lisBtn.visibility = View.GONE
         endNavBtn.visibility = View.VISIBLE
-        enroutToBar = bar
+        enrouteToBar = bar
         isNavClicked = true
         val directions = getDirections(
             currentPos.value!!.lat,

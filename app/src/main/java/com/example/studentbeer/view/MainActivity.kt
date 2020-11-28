@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(),
 
         //endnavigation button
         binding.fabEndNav.setOnClickListener {
-            viewModel.enroutToBar = null
+            viewModel.enrouteToBar = null
             viewModel.isNavClicked = false
             userLocationZoomSet = false
             binding.fabList.visibility = View.VISIBLE
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(),
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
-        if (viewModel.visistedBar!=null){
+        if (viewModel.visitedBar!=null){
             runBlocking {  viewModel.getUserReview(this@MainActivity) }
         }
         //restores not set on position value on restart.
@@ -218,8 +218,8 @@ class MainActivity : AppCompatActivity(),
             askForlocationPermission()
 
             //If bar navigation was not completed.
-            if (viewModel.enroutToBar!=null){
-                val directions = viewModel.getDirections(location.lat,location.long,viewModel.enroutToBar!!.latitude,viewModel.enroutToBar!!.longitude)
+            if (viewModel.enrouteToBar!=null){
+                val directions = viewModel.getDirections(location.lat,location.long,viewModel.enrouteToBar!!.latitude,viewModel.enrouteToBar!!.longitude)
                 val polyline = viewModel.getPolyLine(directions)
                 map.addPolyline(polyline)
                 binding.fabEndNav.visibility = View.VISIBLE
@@ -252,9 +252,9 @@ class MainActivity : AppCompatActivity(),
                 //if navigation is clicked this will fire on location update
                 viewModel.isNavClicked ->{
 
-                    if (viewModel.enroutToBar!=null&&viewModel.haversineFormula(location.lat,location.long,viewModel.enroutToBar!!.latitude,viewModel.enroutToBar!!.longitude)<0.04){
-                        viewModel.visistedBar = viewModel.enroutToBar
-                        viewModel.enroutToBar = null
+                    if (viewModel.enrouteToBar!=null&&viewModel.haversineFormula(location.lat,location.long,viewModel.enrouteToBar!!.latitude,viewModel.enrouteToBar!!.longitude)<0.04){
+                        viewModel.visitedBar = viewModel.enrouteToBar
+                        viewModel.enrouteToBar = null
                         viewModel.isNavClicked = false
                         initMap()
                         binding.fabEndNav.visibility = View.GONE
