@@ -93,11 +93,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     }
 
     fun sendUserReview(userReview: UserReviewModel) {
-        //Connection with firebase
-        Log.d(
-            "userREVIEW",
-            "sendUserReview: ${userReview.barName} rating:${userReview.userRating} barid:${userReview.barFireBaseId} price:${userReview.userDefinedBeerPrice} "
-        )
+        dataRepository.sendUserReview(userReview)
     }
 
     fun getUserReview(context: Context) {
@@ -128,8 +124,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                 sendReviewBtn.setOnClickListener {
                     sendUserReview(
                         UserReviewModel(
-                            barFireBaseId = bar.id,
-                            barName = bar.barName,
+                            barId = bar.id,
                             userRating = userReviewCardUserRating.rating.toDouble(),
                             userDefinedBeerPrice = userPriceInputCardBeerPrice.text.toString()
                                 .toInt()

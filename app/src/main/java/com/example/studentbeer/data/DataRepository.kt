@@ -4,10 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.studentbeer.data.models.BarModel
+import com.example.studentbeer.data.models.UserReviewModel
 import com.example.studentbeer.data.models.apiResponse.DirectionsModel
 import com.example.studentbeer.util.RetrofitInstance
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlin.math.log
 
 
 class DataRepository(application: Application) {
@@ -41,8 +43,8 @@ class DataRepository(application: Application) {
                     barList.add(
                         bar.toObject(BarModel::class.java)
                     )
-                    liveBarList.value = barList
                 }
+                liveBarList.value = barList
             }
         }
     }
@@ -76,6 +78,18 @@ class DataRepository(application: Application) {
         }
         return bar
     }
+
+    fun sendUserReview(userReview: UserReviewModel) {
+        val reviewDoc = db.collection("barsRating").document(userReview.barId)
+        reviewDoc.update(
+            "addRating",true,
+            "userPaid",userReview.userDefinedBeerPrice,
+            "userRating",userReview.userRating
+        ).addOnSuccessListener { Log.d(successTag, "sendUserReview: WORKED") }
+            .addOnFailureListener { Log.d(errorTag, "sendUserReview: FAILD") }
+    }
+
+
 
     // Add all the data in TempSingleTon to FireStore, DO NOT CALL THIS FUNCTION.
 /*    fun addTempData() {
