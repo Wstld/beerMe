@@ -6,7 +6,7 @@ data class BarModel(
     val longitude: Double = 0.0,
     val streetName: String = "",
     val openHours: String = "",
-    val rating: Double = 0.0,
+    val rating: Double = 3.0,
     val beerPrice: Int = 0,
     var id: String = ""
 )
