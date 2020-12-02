@@ -59,7 +59,8 @@ class DataRepository(application: Application) {
             "openHours" to bar.openHours,
             "rating" to bar.rating,
             "beerPrice" to bar.beerPrice,
-            "id" to bar.id
+            "id" to bar.id,
+            "questionablePrice" to bar.questionablePrice
         )
     }
 
@@ -92,7 +93,7 @@ class DataRepository(application: Application) {
 
 
     // Add all the data in TempSingleTon to FireStore, DO NOT CALL THIS FUNCTION.
-/*    fun addTempData() {
+    fun addTempData() {
         try {
             for (bar in TempSingleTon.bars) {
                 db.collection("bars").add(convertBarModelToHashMap(bar)).addOnSuccessListener {
@@ -118,7 +119,7 @@ class DataRepository(application: Application) {
         } catch (event: Exception) {
             Log.d(errorTag, "Something went wrong! func {addIdToTempData} $event")
         }
-    }*/
+    }
 
 
     // read all data from FireStore, collection "bars"

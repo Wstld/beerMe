@@ -5,4 +5,7 @@
         <item name="colorControlNormal">@color/lightGrey</item>
         <item name="colorControlActivated">@color/duskYellow</item>
     </style>
+    <style name="Marker" parent="amu_Bubble.TextAppearance.Dark">
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

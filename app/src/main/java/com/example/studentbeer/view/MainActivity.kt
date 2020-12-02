@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.set
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.studentbeer.R
@@ -22,6 +24,8 @@ import com.example.studentbeer.viewmodel.MainActivityViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW
+import com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap
 import com.google.maps.android.ui.IconGenerator
 import kotlinx.coroutines.*
 
@@ -48,7 +52,9 @@ class MainActivity : AppCompatActivity(),
         )
 
         binding.fabList.setOnClickListener {
-             viewModel.dialogWindow(this,binding.fabList,binding.fabEndNav,googleMap)
+            viewModel.dialogWindow(this,binding.fabList,binding.fabEndNav,googleMap)
+
+
         }
 
         //mapbundle
@@ -176,15 +182,29 @@ class MainActivity : AppCompatActivity(),
 
     fun updateMap(map: GoogleMap, list:List<BarModel>){
         map.clear()
+        val warningIcon = IconGenerator(this)
+        warningIcon.setStyle(IconGenerator.STYLE_ORANGE)
+        warningIcon.setTextAppearance(R.style.Marker)
+
+        val normalIcon = IconGenerator(this)
         list.forEach {
                 bar ->
+
             map.addMarker(
-                MarkerOptions()
-                    .position(LatLng(bar.latitude,bar.longitude))
-                    .title(bar.barName)
-                    .icon(BitmapDescriptorFactory.fromBitmap(
-                        IconGenerator(this).makeIcon("${bar.beerPrice}kr")
-                    ))
+                MarkerOptions().apply {
+                    position(LatLng(bar.latitude,bar.longitude))
+                    title(bar.barName)
+                    if(bar.questionablePrice){
+                        icon(fromBitmap(
+                            warningIcon.makeIcon("~${bar.beerPrice}kr")
+                        )
+                        ).alpha(0.5f)
+                    }else{
+                    icon(fromBitmap(
+                        normalIcon.makeIcon("${bar.beerPrice}kr")))
+                    }
+                }
+
 
             ).tag = bar
         }

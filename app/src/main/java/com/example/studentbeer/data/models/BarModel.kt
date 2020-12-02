@@ -8,5 +8,6 @@ data class BarModel(
     val openHours: String = "",
     val rating: Double = 3.0,
     val beerPrice: Int = 0,
-    var id: String = ""
+    var id: String = "",
+    val questionablePrice:Boolean = false
 )

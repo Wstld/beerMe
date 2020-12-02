@@ -87,9 +87,9 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     }
 
 
-    //clears the map
-    fun test(map: GoogleMap) {
-        map.clear()
+    //adds bars.
+    fun test() {
+        dataRepository.addTempData()
     }
 
     fun sendUserReview(userReview: UserReviewModel) {
