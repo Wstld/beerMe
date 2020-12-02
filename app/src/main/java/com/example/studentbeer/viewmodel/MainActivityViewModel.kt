@@ -231,7 +231,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         endNavBtn: FloatingActionButton,
         map: GoogleMap
     ) {
-        barAndDistanceModelList = getBarAndDistanceList()
+        barAndDistanceModelList = getAllBarswithinTwoKm()
         val dialog =
             MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.TRANSPARENT))
                 .create()
@@ -247,7 +247,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         barList.rvBar.apply {
             addItemDecoration(SpacingItemDecoration(10, 10, 10, 10))
             adapter = BarRecyclerViewAdapter(
-                getAllBarswithinTwoKm(),
+                barAndDistanceModelList!!,
                 context,
                 onClickedNavBtn = { bar ->
                     onRecyclerButtonClick(
@@ -272,19 +272,19 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
             }
             1 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByName(getAllBarswithinTwoKm())
+                barAndDistanceModelList = FilterAlgorithm.sortByName(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             2 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByPrice(getAllBarswithinTwoKm())
+                barAndDistanceModelList = FilterAlgorithm.sortByPrice(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             3 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByRating(getAllBarswithinTwoKm())
+                barAndDistanceModelList = FilterAlgorithm.sortByRating(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             4 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByDistance(getAllBarswithinTwoKm())
+                barAndDistanceModelList = FilterAlgorithm.sortByDistance(barAndDistanceModelList!!)
                 rvBar?.adapter?.notifyDataSetChanged()
             }
         }
