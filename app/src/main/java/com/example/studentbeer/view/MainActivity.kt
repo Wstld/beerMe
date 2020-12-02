@@ -227,6 +227,8 @@ class MainActivity : AppCompatActivity(),
                     updateMap(map=map, list = it)
                 }
             }
+            //remove map toolbar
+            map.uiSettings.isMapToolbarEnabled = false
             //sets default map camera position
             updateMapPosition(location)
 
