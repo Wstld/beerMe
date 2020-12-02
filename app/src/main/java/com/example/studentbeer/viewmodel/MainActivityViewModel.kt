@@ -42,7 +42,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     var isNavClicked = false
     var visitedBar: BarModel? = null
     var enrouteToBar: BarModel? = null
-    var rvBar: RecyclerView? = null
+    private var rvBar: RecyclerView? = null
     private var barAndDistanceModelList: MutableList<BarAndDistanceModel>? = null
 
     fun getDirections(
@@ -65,6 +65,27 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
     fun getAllBars() = dataRepository.liveBarList
 
+    private fun getAllBarswithinTwoKm() : MutableList<BarAndDistanceModel>{
+        val list: MutableList<BarAndDistanceModel> = mutableListOf()
+        getAllBars().value!!.forEach {
+            if (FilterAlgorithm.checkDistance(currentPos.value!!.lat, currentPos.value!!.long, it.latitude, it.longitude)) {
+                val directions = getDirections(
+                    currentPos.value!!.lat,
+                    currentPos.value!!.long,
+                    it.latitude,
+                    it.longitude
+                )
+                if (directions!!.routes.isNotEmpty()) {
+                    val distanceInTime = directions.routes[0].legs[0].duration.text
+                    val distanceInValue = directions.routes[0].legs[0].duration.value
+                    val currentObject = BarAndDistanceModel(distanceInTime, distanceInValue, it)
+                    list.add(currentObject)
+                }
+            }
+        }
+        return list
+    }
+
     private fun getBarAndDistanceList(): MutableList<BarAndDistanceModel> {
         val list: MutableList<BarAndDistanceModel> = mutableListOf()
         getAllBars().value!!.forEach {
@@ -75,8 +96,8 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
                 it.longitude
             )
 
-            if (directions!!.routes.size > 0) {
-                val distanceInTime = directions!!.routes[0].legs[0].duration.text
+            if (directions!!.routes.isNotEmpty()) {
+                val distanceInTime = directions.routes[0].legs[0].duration.text
                 val distanceInValue = directions.routes[0].legs[0].duration.value
                 val currentObject = BarAndDistanceModel(distanceInTime, distanceInValue, it)
                 list.add(currentObject)
@@ -212,7 +233,8 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     ) {
         barAndDistanceModelList = getBarAndDistanceList()
         val dialog =
-            MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.TRANSPARENT)).create()
+            MaterialAlertDialogBuilder(context).setBackground(ColorDrawable(Color.TRANSPARENT))
+                .create()
         val barList = BarListBinding.inflate(LayoutInflater.from(context))
         rvBar = barList.rvBar
         val filterAdapter: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(
@@ -225,7 +247,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
         barList.rvBar.apply {
             addItemDecoration(SpacingItemDecoration(10, 10, 10, 10))
             adapter = BarRecyclerViewAdapter(
-                barAndDistanceModelList!!,
+                getAllBarswithinTwoKm(),
                 context,
                 onClickedNavBtn = { bar ->
                     onRecyclerButtonClick(
@@ -250,19 +272,19 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
 
             }
             1 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByName(barAndDistanceModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByName(getAllBarswithinTwoKm())
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             2 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByPrice(barAndDistanceModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByPrice(getAllBarswithinTwoKm())
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             3 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByRating(barAndDistanceModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByRating(getAllBarswithinTwoKm())
                 rvBar?.adapter?.notifyDataSetChanged()
             }
             4 -> {
-                barAndDistanceModelList = FilterAlgorithm.sortByDistance(barAndDistanceModelList!!)
+                barAndDistanceModelList = FilterAlgorithm.sortByDistance(getAllBarswithinTwoKm())
                 rvBar?.adapter?.notifyDataSetChanged()
             }
         }
