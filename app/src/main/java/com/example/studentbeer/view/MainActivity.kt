@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(),
 
     }
     override fun onMarkerClick(marker: Marker?): Boolean {
-        if (marker != null) {
+        if (marker != null && !viewModel.isNavClicked) {
             val currentBar = marker.tag as BarModel
             viewModel.showDialogOnMarkerClick(this,currentBar,googleMap,binding.fabEndNav,binding.fabList)
             }
