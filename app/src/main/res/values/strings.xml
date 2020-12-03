@@ -2,12 +2,13 @@
     <string name="app_name">StudentBeer</string>
     <string name="rating_question">Hur var ditt besök på</string>
     <string name="price_question">Vad kostade en storstark på</string>
-    <string name="arrived_at_destination">"Du är framme!"</string>
+    <string name="arrived_at_destination">Du är framme!</string>
+    <string name="age_limit_msg">Du måste vara 25 år eller äldre för att använda BeerMe!</string>
     <string-array name="filters">
-        <item>Bars</item>
-        <item>Name</item>
-        <item>Price</item>
-        <item>Rating</item>
-        <item>Distance</item>
+        <item>Barer</item>
+        <item>Namn</item>
+        <item>Pris</item>
+        <item>Betyg</item>
+        <item>Avstånd</item>
     </string-array>
 </resources>
