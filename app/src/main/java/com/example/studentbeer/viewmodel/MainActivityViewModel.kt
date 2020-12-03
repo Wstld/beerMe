@@ -40,6 +40,7 @@ class MainActivityViewModel(private val dataRepository: DataRepository) : ViewMo
     AdapterView.OnItemSelectedListener {
     val currentPos = dataRepository.liveLocationData
     var isNavClicked = false
+    var isAge : Boolean = false
     var visitedBar: BarModel? = null
     var enrouteToBar: BarModel? = null
     private var rvBar: RecyclerView? = null

@@ -71,6 +71,14 @@ class MainActivity : AppCompatActivity(),
             it.visibility = View.GONE
             initMap()
         }
+
+
+        binding.isAgeOver.setOnClickListener {
+            if(!viewModel.isAge) {
+                viewModel.isAge = true
+               binding.ageDialog.visibility = View.GONE
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
