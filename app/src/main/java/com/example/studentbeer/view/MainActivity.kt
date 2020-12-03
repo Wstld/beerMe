@@ -327,7 +327,7 @@ class MainActivity : AppCompatActivity(),
                         initMap()
                         binding.fabEndNav.visibility = View.GONE
                         binding.fabList.visibility = View.VISIBLE
-                        Toast.makeText(this, R.string.arrived_at_destination, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.arrived_at_destination, Toast.LENGTH_LONG).show()
                     }
 
                 }
