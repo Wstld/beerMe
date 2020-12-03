@@ -31,7 +31,7 @@
     <TextView
         android:id="@+id/errorMessage2"
         android:layout_width="220dp"
-        android:layout_height="71dp"
+        android:layout_height="100dp"
         android:layout_marginTop="10dp"
         android:text="StudentBeer behöver tillgång till din GPS för att fungera optimalt."
         android:textAlignment="center"

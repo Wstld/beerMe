@@ -2,20 +2,21 @@ package com.example.studentbeer.view
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Paint
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.set
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.studentbeer.R
-
 import com.example.studentbeer.data.models.BarModel
 import com.example.studentbeer.data.models.LocationModel
 import com.example.studentbeer.databinding.ActivityMainBinding
@@ -24,10 +25,10 @@ import com.example.studentbeer.viewmodel.MainActivityViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_YELLOW
 import com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap
 import com.google.maps.android.ui.IconGenerator
 import kotlinx.coroutines.*
+
 
 const val LOCATION_REQUEST = 1
 class MainActivity : AppCompatActivity(),
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity(),
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var googleMap: GoogleMap
-    private var location: LocationModel = LocationModel(59.31159,18.030053)
+    private var location: LocationModel = LocationModel(59.31159, 18.030053)
     private var mapReady = false
     private var userLocationZoomSet = false
 
@@ -47,12 +48,12 @@ class MainActivity : AppCompatActivity(),
 
         //init viewmodel
         val factory = UtilInject.viewModelFactoryInjection(this.application)
-        viewModel = ViewModelProvider(this,factory).get(
+        viewModel = ViewModelProvider(this, factory).get(
             MainActivityViewModel::class.java
         )
 
         binding.fabList.setOnClickListener {
-            viewModel.dialogWindow(this,binding.fabList,binding.fabEndNav,googleMap)
+            viewModel.dialogWindow(this, binding.fabList, binding.fabEndNav, googleMap)
 
 
         }
@@ -104,7 +105,13 @@ class MainActivity : AppCompatActivity(),
     override fun onMarkerClick(marker: Marker?): Boolean {
         if (marker != null && !viewModel.isNavClicked) {
             val currentBar = marker.tag as BarModel
-            viewModel.showDialogOnMarkerClick(this,currentBar,googleMap,binding.fabEndNav,binding.fabList)
+            viewModel.showDialogOnMarkerClick(
+                this,
+                currentBar,
+                googleMap,
+                binding.fabEndNav,
+                binding.fabList
+            )
             }
         return false
     }
@@ -169,6 +176,27 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun verifyLocationServiceIsEnabled() {
+        if (isLocationEnabled(this) == false) {
+            startMissingPermissionsActivity()
+        }
+    }
+
+    private fun isLocationEnabled(context: Context): Boolean? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            locationManager.isLocationEnabled
+        } else {
+            // This is Deprecated in API 28
+            val mode: Int = Settings.Secure.getInt(
+                context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                Settings.Secure.LOCATION_MODE_OFF
+            )
+            mode != Settings.Secure.LOCATION_MODE_OFF
+        }
+    }
+
     //checks if location permission is given and returns true or false.
     private fun isPermissionsGranted() =
         ActivityCompat.checkSelfPermission(
@@ -180,28 +208,31 @@ class MainActivity : AppCompatActivity(),
             Manifest.permission.ACCESS_COARSE_LOCATION
         )== PackageManager.PERMISSION_GRANTED
 
-    fun updateMap(map: GoogleMap, list:List<BarModel>){
+    fun updateMap(map: GoogleMap, list: List<BarModel>){
         map.clear()
         val warningIcon = IconGenerator(this)
         warningIcon.setStyle(IconGenerator.STYLE_ORANGE)
         warningIcon.setTextAppearance(R.style.Marker)
 
         val normalIcon = IconGenerator(this)
-        list.forEach {
-                bar ->
+        list.forEach { bar ->
 
             map.addMarker(
                 MarkerOptions().apply {
-                    position(LatLng(bar.latitude,bar.longitude))
+                    position(LatLng(bar.latitude, bar.longitude))
                     title(bar.barName)
-                    if(bar.questionablePrice){
-                        icon(fromBitmap(
-                            warningIcon.makeIcon("~${bar.beerPrice}kr")
-                        )
+                    if (bar.questionablePrice) {
+                        icon(
+                            fromBitmap(
+                                warningIcon.makeIcon("~${bar.beerPrice}kr")
+                            )
                         ).alpha(0.5f)
-                    }else{
-                    icon(fromBitmap(
-                        normalIcon.makeIcon("${bar.beerPrice}kr")))
+                    } else {
+                        icon(
+                            fromBitmap(
+                                normalIcon.makeIcon("${bar.beerPrice}kr")
+                            )
+                        )
                     }
                 }
 
@@ -211,20 +242,21 @@ class MainActivity : AppCompatActivity(),
         map.setOnMarkerClickListener(this)
     }
 
-    fun updateMapPosition(pos:LocationModel){
+    fun updateMapPosition(pos: LocationModel){
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    LatLng(pos.lat,pos.long),16.0f
-                ))
+                    LatLng(pos.lat, pos.long), 16.0f
+                )
+            )
     }
 
     fun initMap(){
-        binding.mapView.getMapAsync{map ->
+        binding.mapView.getMapAsync{ map ->
             googleMap = map
             mapReady = true
             viewModel.getAllBars().observe(this) {
                 if(it.isNotEmpty()){
-                    updateMap(map=map, list = it)
+                    updateMap(map = map, list = it)
                 }
             }
             //remove map toolbar
@@ -232,12 +264,20 @@ class MainActivity : AppCompatActivity(),
             //sets default map camera position
             updateMapPosition(location)
 
+            //make sure location services are enabled before we continue
+            verifyLocationServiceIsEnabled()
+
             //ask for location grant, if user agrees to this setlocation() observes user location and updates position of camera to this once.
             askForLocationPermission()
 
             //If bar navigation was not completed.
             if (viewModel.enrouteToBar!=null){
-                val directions = viewModel.getDirections(location.lat,location.long,viewModel.enrouteToBar!!.latitude,viewModel.enrouteToBar!!.longitude)
+                val directions = viewModel.getDirections(
+                    location.lat,
+                    location.long,
+                    viewModel.enrouteToBar!!.latitude,
+                    viewModel.enrouteToBar!!.longitude
+                )
                 val polyline = viewModel.getPolyLine(directions)
                 map.addPolyline(polyline)
                 binding.fabEndNav.visibility = View.VISIBLE
@@ -249,7 +289,8 @@ class MainActivity : AppCompatActivity(),
     @SuppressLint("MissingPermission")
     private fun setLocationListener(){
         if (isPermissionsGranted())
-        viewModel.currentPos.observe(this
+        viewModel.currentPos.observe(
+            this
         ) {
             //observes changes in location and sets location variable to current.
           location = it
@@ -266,7 +307,12 @@ class MainActivity : AppCompatActivity(),
                 //if navigation is clicked this will fire on location update
                 viewModel.isNavClicked ->{
 
-                    if (viewModel.enrouteToBar!=null&&viewModel.haversineFormula(location.lat,location.long,viewModel.enrouteToBar!!.latitude,viewModel.enrouteToBar!!.longitude)<0.04){
+                    if (viewModel.enrouteToBar!=null&&viewModel.haversineFormula(
+                            location.lat,
+                            location.long,
+                            viewModel.enrouteToBar!!.latitude,
+                            viewModel.enrouteToBar!!.longitude
+                        )<0.04){
                         viewModel.visitedBar = viewModel.enrouteToBar
                         viewModel.enrouteToBar = null
                         viewModel.isNavClicked = false
